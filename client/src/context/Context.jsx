@@ -19,9 +19,9 @@ export const ContextProvider = ({ children }) => {
       try {
         const res = await axios.get("http://localhost:5000/api/products-api");
         setProducts(res.data);
-        setIsLoading(!isLoading);
+        setIsLoading(false);
       } catch (error) {
-        console.error("There some errors during fetching api", error);
+        console.error("API dan ma'lumot olishda xatolik:", error);
       }
     };
 
@@ -36,14 +36,25 @@ export const ContextProvider = ({ children }) => {
     localStorage.setItem("savatcha", JSON.stringify(cart));
   }, [cart]);
 
-  const toggleLike = (product) => {
-    const isAlreadyLiked = likedProducts.some((p) => p.id === product.id);
+  const toggleLike = (productId) => {
+    const product = products.find((p) => p._id === productId);
+    const isAlreadyLiked = likedProducts.some((p) => p._id === productId);
+
+    if (!product) {
+      Swal.fire({
+        icon: "error",
+        title: "Mahsulot topilmadi!",
+        timer: 1000,
+        showConfirmButton: false,
+      });
+      return;
+    }
+
     if (isAlreadyLiked) {
-      setLikedProducts(likedProducts.filter((p) => p.id !== product.id));
+      setLikedProducts(likedProducts.filter((p) => p._id !== productId));
       Swal.fire({
         icon: "warning",
-        title: "Product unliked!",
-        text: `${product.title.slice(0, 20)} unliked.`,
+        title: "Yoqtirilganlardan olib tashlandi",
         timer: 1000,
         showConfirmButton: false,
       });
@@ -51,8 +62,7 @@ export const ContextProvider = ({ children }) => {
       setLikedProducts([...likedProducts, product]);
       Swal.fire({
         icon: "success",
-        title: "Product liked!",
-        text: `${product.title.slice(0, 20)} liked.`,
+        title: "Yoqtirilganlarga qo‘shildi",
         timer: 1000,
         showConfirmButton: false,
       });
@@ -60,13 +70,13 @@ export const ContextProvider = ({ children }) => {
   };
 
   const toggleCart = (product) => {
-    const isAlreadyAdded = cart.some((p) => p.id === product.id);
+    const isAlreadyAdded = cart.some((p) => p._id === product._id);
+
     if (isAlreadyAdded) {
-      setCart(cart.filter((p) => p.id !== product.id));
+      setCart(cart.filter((p) => p._id !== product._id));
       Swal.fire({
         icon: "warning",
-        title: "Product deleted from Cart!",
-        text: `${product.title.slice(0, 20)} deleted.`,
+        title: "Savatchadan olib tashlandi",
         timer: 1000,
         showConfirmButton: false,
       });
@@ -74,8 +84,7 @@ export const ContextProvider = ({ children }) => {
       setCart([...cart, product]);
       Swal.fire({
         icon: "success",
-        title: "Product added to Cart!",
-        text: `${product.title.slice(0, 20)} added.`,
+        title: "Savatchaga qo‘shildi",
         timer: 1000,
         showConfirmButton: false,
       });
@@ -85,7 +94,7 @@ export const ContextProvider = ({ children }) => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin w-12 h-12 bg-blue-500"></div>
+        <div className="animate-spin w-12 h-12 border-t-4 border-blue-500 rounded-full"></div>
       </div>
     );
   }

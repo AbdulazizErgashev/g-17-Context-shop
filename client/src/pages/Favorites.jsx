@@ -42,7 +42,7 @@ export default function Favorites() {
                 ${product.price}
               </span>
               <button
-                onClick={() => toggleLike(product)}
+                onClick={() => toggleLike(product._id)}
                 className="text-red-500 hover:text-red-600 p-2 rounded-full border border-red-200 hover:border-red-400 transition"
                 title="Unlike"
               >

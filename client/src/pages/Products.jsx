@@ -10,7 +10,7 @@ export default function Products() {
     <section className="container mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center items-center gap-y-10 my-20">
         {products.map((mahsulot) => {
-          const isLiked = likedProducts.some((p) => p.id === mahsulot.id);
+          const isLiked = likedProducts.some((p) => p._id === mahsulot._id);
           return (
             <div
               key={mahsulot._id}
@@ -25,7 +25,7 @@ export default function Products() {
                     ? "text-red-500 border-red-500"
                     : "text-gray-500 border-gray-500"
                 }`}
-                onClick={() => toggleLike(mahsulot)}
+                onClick={() => toggleLike(mahsulot._id)}
               >
                 <Heart />
               </button>
